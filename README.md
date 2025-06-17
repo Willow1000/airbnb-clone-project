@@ -195,3 +195,40 @@ Handles payment processing for confirmed bookings. Payments are linked to bookin
 
 📄 API Documentation
 Interactive Swagger documentation is available for all endpoints using DRF-YASG. This allows developers to test and understand API behavior in real time, making integration with frontend or mobile apps seamless.
+
+
+🔐 API Security
+Security is a critical part of this project to protect sensitive user data, prevent abuse, and ensure the integrity of the booking and payment system. Below are the core measures in place to secure the API:
+
+✅ Authentication
+The project uses JWT (JSON Web Tokens) for stateless, secure authentication. Tokens are issued upon login and must be included in headers for all protected routes. This ensures only verified users can access personal or sensitive endpoints.
+
+Why it matters: Prevents unauthorized access to user profiles, bookings, and payment info.
+
+🛡️ Authorization
+Role-based access control (RBAC) is enforced. Hosts can manage properties, guests can make bookings, and only the rightful user can modify their data.
+
+Why it matters: Stops users from accessing or modifying data they don’t own — e.g., booking someone else’s property.
+
+⏱️ Rate Limiting
+Basic rate limiting is implemented to prevent brute-force attacks, spamming endpoints, and overwhelming the server. Tools like DRF throttling will be used to control request flow per user/IP.
+
+Why it matters: Helps mitigate abuse, bot traffic, and denial-of-service (DoS) attempts.
+
+🔒 Data Validation & Sanitization
+All inputs are validated and sanitized on both backend and API layers using DRF serializers. This prevents injection attacks (e.g., SQL, XSS) and ensures consistent data handling.
+
+Why it matters: Protects the backend from malicious inputs and improves data quality.
+
+🔐 Secure Payments
+All payment endpoints are protected with both authentication and transaction-level validations. Sensitive operations will use HTTPS and CSRF protection (when applicable in browser-based flows).
+
+Why it matters: Prevents fraud, data leaks, and fake transactions that could compromise trust.
+
+🧯 Error Handling & Logging
+API errors are sanitized — internal exceptions are not exposed. Logging is implemented for security-related events such as failed logins, permission errors, and payment issues.
+
+Why it matters: Prevents leaking stack traces or system internals to attackers, while keeping an audit trail.
+
+
+
