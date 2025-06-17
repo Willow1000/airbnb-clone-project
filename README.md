@@ -15,7 +15,7 @@ RESTful API endpoints for frontend integration
 
 The goal is to architect a scalable, secure, and maintainable API backend that can power a full-featured booking platform, serving as a solid foundation for frontend expansion or mobile integration.
 
-🚀 Tech Stack
+🚀 Technology Stack
 Python 3.11+
 
 Django – Web framework for backend logic and admin tools
