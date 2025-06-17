@@ -1,234 +1,199 @@
-Overview
-This is a backend-focused Airbnb clone built with Django and Django REST Framework (DRF). The project aims to replicate core Airbnb functionalities such as:
+# 🏡 Airbnb Clone – Backend API
 
-User authentication and profile management
+This is a backend-focused **Airbnb clone** built with Django and Django REST Framework (DRF). The project replicates key Airbnb features and provides a scalable, secure, and maintainable API backend for a booking platform.
 
-Listing creation, editing, and deletion
+---
 
-Search and filtering of listings
+## 📌 Overview
 
-Booking system with date validation
+The project aims to implement core Airbnb functionalities including:
 
-Reviews and ratings
+- User authentication and profile management  
+- Property listing creation, editing, and deletion  
+- Search and filtering of listings  
+- Booking system with date validation  
+- Reviews and ratings  
+- RESTful API endpoints for frontend/mobile integration
 
-RESTful API endpoints for frontend integration
+The goal is to create a modular and extensible backend ready for production, with clear security protocols and developer-friendly API documentation.
 
-The goal is to architect a scalable, secure, and maintainable API backend that can power a full-featured booking platform, serving as a solid foundation for frontend expansion or mobile integration.
+---
 
-🚀 Technology Stack
-Python 3.11+
+## 🚀 Technology Stack
 
-Django – Web framework for backend logic and admin tools
+| Technology | Purpose |
+|------------|---------|
+| **Python 3.11+** | Primary language for backend logic |
+| **Django** | Web framework for handling backend views, models, and admin interface |
+| **Django REST Framework (DRF)** | Used to expose the application’s functionalities via RESTful APIs |
+| **PostgreSQL** | Primary relational database (fallback: SQLite for local development) |
+| **JWT Authentication** | Secure, stateless user authentication for APIs |
+| **Docker** *(optional)* | Containerized development for consistency across environments |
+| **Swagger / DRF-YASG** | API documentation and testing interface |
 
-Django REST Framework (DRF) – For building RESTful APIs
+---
 
-PostgreSQL – Primary database (optional, fallback to SQLite during dev)
+## 👥 Team Roles
 
-JWT Authentication – For secure token-based login/logout
+| Role | Responsibility |
+|------|----------------|
+| **🧠 Project Manager** | Oversees planning, communication, and ensures alignment with project goals |
+| **🛠️ Backend Developer** | Implements API endpoints, business logic, and backend features using Django/DRF |
+| **🗃️ Database Administrator** | Designs models, manages migrations, and optimizes database performance |
+| **🧪 QA Engineer / Tester** | Writes automated/manual tests and ensures regression and bug testing |
+| **🔒 DevOps Engineer** | Handles Docker, CI/CD setup, deployment, and environment management |
+| **📄 Technical Writer** | Documents features, API endpoints, usage guidelines, and changelogs |
 
-Docker (optional) – For containerized development
+---
 
-Swagger / DRF-YASG – For interactive API documentation
+## 🗃️ Database Design
 
-Team Roles
-🧠 Project Manager
-Responsible for overall planning, timeline management, and communication. Ensures the project stays on track, aligns with the goals, and meets deadlines.
-
-🛠️ Backend Developer
-Designs and implements the server-side logic using Django and Django REST Framework. Handles API endpoints, authentication, business logic, and integration with the database.
-
-🗃️ Database Administrator (DBA)
-Designs and manages the data models, relationships, indexing strategies, and database optimization. Ensures data integrity, backups, and performance tuning.
-
-🧪 QA Engineer / Tester
-Writes and runs automated/manual tests to ensure API endpoints work correctly and consistently. Also responsible for regression testing and identifying bugs pre-deployment.
-
-🔒 DevOps / Deployment Engineer
-Handles environment setup, CI/CD pipelines, Dockerization, and deployment strategies. Ensures smooth version control, staging, and production releases.
-
-📄 Technical Writer
-Maintains project documentation including README, API docs (Swagger or DRF-YASG), changelogs, and developer guides to ease onboarding and usage.
-
-
-
-🗃️ Database Design
-The following are the core entities in the system and their relationships:
-
-🔐 Users
+### 🔐 Users
 Represents registered users — both guests and hosts.
 
-Important Fields:
+**Fields:**
+- `id`: Primary key
+- `email`: Unique login identifier
+- `password`: Hashed password
+- `is_host`: Boolean to flag hosts
+- `date_joined`: Timestamp
 
-id: Primary key (UUID or AutoField)
+**Relationships:**
+- One user can create multiple properties
+- One user can make multiple bookings
+- One user can write multiple reviews
 
-email: Unique identifier for login
+---
 
-password: Hashed password
+### 🏠 Properties
+Represents listings available for booking.
 
-is_host: Boolean flag to distinguish hosts from guests
+**Fields:**
+- `id`: Primary key
+- `owner`: ForeignKey to `User`
+- `title`: Short descriptor
+- `description`: Detailed content
+- `price_per_night`: Decimal
 
-date_joined: Account creation timestamp
+**Relationships:**
+- Belongs to one host
+- Can have many bookings and reviews
 
-Relationships:
+---
 
-A user can create multiple properties (if they’re a host)
+### 📅 Bookings
+Represents reservations made by users.
 
-A user can book multiple properties (as a guest)
+**Fields:**
+- `id`: Primary key
+- `guest`: ForeignKey to `User`
+- `property`: ForeignKey to `Property`
+- `check_in`: Date
+- `check_out`: Date
 
-A user can leave multiple reviews
+**Relationships:**
+- One booking per guest per property
 
-🏠 Properties
-Represents a property or listing available for rent.
+---
 
-Important Fields:
+### ⭐ Reviews
+User-submitted property reviews.
 
-id: Primary key
+**Fields:**
+- `id`: Primary key
+- `author`: ForeignKey to `User`
+- `property`: ForeignKey to `Property`
+- `rating`: Integer (1-5)
+- `comment`: Text
 
-owner: ForeignKey to User
+**Relationships:**
+- One user ➝ many reviews
+- One property ➝ many reviews
 
-title: Short description of the property
+---
 
-description: Detailed info about the listing
+### 💳 Payments
+Tracks transaction data.
 
-price_per_night: Numeric field for nightly rate
+**Fields:**
+- `id`: Primary key
+- `booking`: OneToOneField
+- `amount`: Decimal
+- `status`: Enum/CharField
+- `payment_method`: Card, PayPal, etc.
 
-Relationships:
+**Relationships:**
+- One booking ➝ one payment
 
-A property is owned by one host (user)
+---
 
-A property can have many bookings and many reviews
+### 🔗 Entity Relationship Summary
 
-📅 Bookings
-Represents a reservation of a property by a guest.
+- One `User` ➝ Many `Properties`
+- One `User` ➝ Many `Bookings`
+- One `User` ➝ Many `Reviews`
+- One `Property` ➝ Many `Bookings`
+- One `Property` ➝ Many `Reviews`
+- One `Booking` ➝ One `Payment`
 
-Important Fields:
+---
 
-id: Primary key
+## ✨ Feature Breakdown
 
-guest: ForeignKey to User
+### 👤 User Management
+User registration, login, profile management, and authentication via JWT. Handles both guests and hosts with role-based permissions.
 
-property: ForeignKey to Property
+### 🏠 Property Management
+Hosts can create, update, and delete property listings with detailed info such as title, description, price, and location.
 
-check_in: Date field
+### 📆 Booking System
+Allows guests to reserve properties. Handles date availability, total cost calculation, and prevents double-booking.
 
-check_out: Date field
+### ⭐ Review & Rating System
+Users can rate and leave feedback on properties after their stay. Boosts platform trust and guides future guests.
 
-Relationships:
+### 💳 Payment Integration
+Handles payment records and transaction logic. Designed to be extended to integrate real payment gateways.
 
-A booking is made by one user (guest)
+### 📄 API Documentation
+Swagger (DRF-YASG) provides interactive API documentation for testing and developer onboarding.
 
-A booking is associated with one property
+---
 
-⭐ Reviews
-Represents user-generated feedback for a property.
+## 🔐 API Security
 
-Important Fields:
+| Security Layer | Purpose |
+|----------------|---------|
+| **Authentication (JWT)** | Secures endpoints with stateless login and logout using tokens |
+| **Authorization (RBAC)** | Restricts actions based on user roles (host, guest) |
+| **Rate Limiting** | Prevents brute-force attacks and API abuse using throttling |
+| **Validation & Sanitization** | Prevents malicious input and ensures data consistency |
+| **Secure Payments** | Protects transactions with endpoint security and HTTPS |
+| **Logging & Error Handling** | Logs suspicious activity, prevents leakage of sensitive system errors |
 
-id: Primary key
+Security ensures protection of user data, financial integrity, and platform trust.
 
-author: ForeignKey to User
+---
 
-property: ForeignKey to Property
+## 🚀 CI/CD Pipeline
 
-rating: Integer (1–5)
+CI/CD (Continuous Integration and Deployment) automates building, testing, and deploying code for faster, safer releases.
 
-comment: Text field
+### 📦 Purpose
 
-Relationships:
+- Run tests on every push or pull request
+- Ensure clean and reproducible builds
+- Automate deployment to staging/production
 
-A review is written by one user
+### 🛠️ Tools
 
-A review belongs to one property
+| Tool | Purpose |
+|------|---------|
+| **GitHub Actions** | Run CI workflows like tests, linting, and deployments |
+| **Docker** | Containerization for environment consistency |
+| **Docker Compose** | Multi-container orchestration (e.g., DB + App) |
+| **Heroku / Render / Railway** | Optional PaaS platforms with CI/CD integrations |
 
-💳 Payments
-Represents transactions made for bookings.
+Future additions: code coverage, static analysis, and staging previews.
 
-Important Fields:
-
-id: Primary key
-
-booking: OneToOneField to Booking
-
-amount: Decimal
-
-status: Enum or CharField (pending, completed, failed)
-
-payment_method: e.g., card, PayPal
-
-Relationships:
-
-Each booking has exactly one payment
-
-Payments are tied to users indirectly through bookings
-
-🔗 Entity Relationships Summary
-One User ➡️ Many Properties
-
-One User ➡️ Many Bookings
-
-One User ➡️ Many Reviews
-
-One Property ➡️ Many Bookings
-
-One Property ➡️ Many Reviews
-
-One Booking ➡️ One Payment
-
-
-
-
-✨ Feature Breakdown
-👤 User Management
-Allows users to register, log in, and manage their profiles. Users can be either guests who book properties or hosts who list them. Includes secure authentication using JWT and role-based access control for managing permissions.
-
-🏠 Property Management
-Hosts can create, update, and delete property listings. Each listing includes details such as title, description, location, price, and availability. This feature is core to enabling a marketplace-like environment for short-term rentals.
-
-📆 Booking System
-Guests can book available properties for specific dates. The system ensures date validations, avoids double bookings, and calculates total costs. It also links bookings with payments and user histories.
-
-⭐ Review & Rating System
-Users can leave reviews and rate properties they’ve stayed at. This helps maintain trust in the platform and provides social proof for other guests. Reviews include text feedback and a numeric rating from 1 to 5.
-
-💳 Payment Integration
-Handles payment processing for confirmed bookings. Payments are linked to bookings and include transaction status (pending, successful, failed). While initially mocked or simplified, this module is designed to integrate with real payment gateways like Stripe or PayPal in the future.
-
-📄 API Documentation
-Interactive Swagger documentation is available for all endpoints using DRF-YASG. This allows developers to test and understand API behavior in real time, making integration with frontend or mobile apps seamless.
-
-
-🔐 API Security
-Security is a critical part of this project to protect sensitive user data, prevent abuse, and ensure the integrity of the booking and payment system. Below are the core measures in place to secure the API:
-
-✅ Authentication
-The project uses JWT (JSON Web Tokens) for stateless, secure authentication. Tokens are issued upon login and must be included in headers for all protected routes. This ensures only verified users can access personal or sensitive endpoints.
-
-Why it matters: Prevents unauthorized access to user profiles, bookings, and payment info.
-
-🛡️ Authorization
-Role-based access control (RBAC) is enforced. Hosts can manage properties, guests can make bookings, and only the rightful user can modify their data.
-
-Why it matters: Stops users from accessing or modifying data they don’t own — e.g., booking someone else’s property.
-
-⏱️ Rate Limiting
-Basic rate limiting is implemented to prevent brute-force attacks, spamming endpoints, and overwhelming the server. Tools like DRF throttling will be used to control request flow per user/IP.
-
-Why it matters: Helps mitigate abuse, bot traffic, and denial-of-service (DoS) attempts.
-
-🔒 Data Validation & Sanitization
-All inputs are validated and sanitized on both backend and API layers using DRF serializers. This prevents injection attacks (e.g., SQL, XSS) and ensures consistent data handling.
-
-Why it matters: Protects the backend from malicious inputs and improves data quality.
-
-🔐 Secure Payments
-All payment endpoints are protected with both authentication and transaction-level validations. Sensitive operations will use HTTPS and CSRF protection (when applicable in browser-based flows).
-
-Why it matters: Prevents fraud, data leaks, and fake transactions that could compromise trust.
-
-🧯 Error Handling & Logging
-API errors are sanitized — internal exceptions are not exposed. Logging is implemented for security-related events such as failed logins, permission errors, and payment issues.
-
-Why it matters: Prevents leaking stack traces or system internals to attackers, while keeping an audit trail.
-
-
-
+---
