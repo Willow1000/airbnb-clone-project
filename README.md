@@ -173,3 +173,25 @@ One Property ➡️ Many Bookings
 One Property ➡️ Many Reviews
 
 One Booking ➡️ One Payment
+
+
+
+
+✨ Feature Breakdown
+👤 User Management
+Allows users to register, log in, and manage their profiles. Users can be either guests who book properties or hosts who list them. Includes secure authentication using JWT and role-based access control for managing permissions.
+
+🏠 Property Management
+Hosts can create, update, and delete property listings. Each listing includes details such as title, description, location, price, and availability. This feature is core to enabling a marketplace-like environment for short-term rentals.
+
+📆 Booking System
+Guests can book available properties for specific dates. The system ensures date validations, avoids double bookings, and calculates total costs. It also links bookings with payments and user histories.
+
+⭐ Review & Rating System
+Users can leave reviews and rate properties they’ve stayed at. This helps maintain trust in the platform and provides social proof for other guests. Reviews include text feedback and a numeric rating from 1 to 5.
+
+💳 Payment Integration
+Handles payment processing for confirmed bookings. Payments are linked to bookings and include transaction status (pending, successful, failed). While initially mocked or simplified, this module is designed to integrate with real payment gateways like Stripe or PayPal in the future.
+
+📄 API Documentation
+Interactive Swagger documentation is available for all endpoints using DRF-YASG. This allows developers to test and understand API behavior in real time, making integration with frontend or mobile apps seamless.
